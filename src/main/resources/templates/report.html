@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html  xmlns:th="https://www.thymeleaf.org" 
+  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title th:text="#{report.title}">Report</title>
+<style>
+	#main * {display:none;}
+	#main #printarea {display:block;}
+</style>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+	crossorigin="anonymous">
+</head>
+<body>
+<th:block th:insert="fragments/header.html"/>
+<div class="container" id="printarea" name="printarea">
+<h2>L&nbsp;<span th:text="#{report.title}">Report</span></h2>
+	Shift # <span th:text="${report.shiftId}"></span>
+	<span th:text="${user}"></span>
+	<table class="table">
+		<tr class="active">
+			<td colspan="2"><h5 th:text="#{report.text.sell}">Sell</h5></td>
+		</tr>
+		<tr>
+			<td th:text="#{report.text.overallcheques}">Overall cheques</td>
+			<td><span th:text="${report.closed}"></span>&nbsp;<span th:text="#{report.text.cheques}"></span></td>
+		</tr>
+		<tr>
+			<td th:text="#{report.text.overallsum}">Overall sum</td>
+			<td><span th:text="${report.closedCost}"></span>&nbsp;<span th:text="#{app.text.currency}"></span></td>
+		</tr>
+		<tr  class="active">
+			<td colspan="2"><h5 th:text="#{report.text.return}">Return</h5></td>
+		</tr>
+		<tr>
+			<td  th:text="#{report.text.overallcancelled}">Overall cancelled</td>
+			<td><span th:text="${report.cancelled}"/>&nbsp;<span th:text="#{report.text.cheques}"/></td>
+		</tr>
+		<tr>
+			<td  th:text="#{report.text.overallsum}">Overall sum</td>
+			<td><span th:text="${report.cancelledCost}"/>&nbsp;<span th:text="#{app.text.currency}"/></td>
+		</tr>
+	</table>
+</div>
+<div class="container">
+<button onclick="window.print();" class="btn btn-info" th:text="#{report.button.print}">Print report</button>
+</div>
+
+<th:block th:insert="fragments/footer.html"> </th:block>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html  xmlns:th="https://www.thymeleaf.org" 
+  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title th:text="#{app.title}+#{products.title}"></title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+	crossorigin="anonymous">
+</head>
+<body>
+<header th:insert="fragments/header.html"> </header>
+
+
+	<div class="container" >
+		<h2 th:text = "#{products.title}">Products</h2>
+
+		<div class="input-group" th:if="${products.hasContent}">
+			<form method="get">
+				<input name="searchValue"class="form-control" required="true"
+				placeholder="Type the product name or id">
+				<div class="input-group-btn">
+					<button type="submit" class="btn btn-info" formaction="search">Search</button>
+				</div>
+			</form>
+		</div>
+</div>
+<br>
+<th:block th:insert="fragments/messages.html"> </th:block>
+<div  th:if="${products.hasContent}">	
+		<span th:text="${products.getTotalElements}"></span>&nbsp;<span th:text="#{products.text.totalnumber}"></span>
+		
+			<table class="table table-striped">
+				<thead class="font-weight-bold">
+					<tr>
+						<td th:text="#{products.table.label.id}">Id</td>
+						<td th:text="#{products.table.label.name}">Name</td>
+						<td th:text="#{products.table.label.price}">Price</td>
+						<td th:text="#{products.table.label.amount}">Amount</td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</thead>
+				<tr th:each="product : ${products}">
+					<td th:text="${product.id}"></td>
+					<td th:text="${product.name}"></td>
+					<td th:text="${product.price} + ' ' + #{app.text.currency}"></td>
+					<td th:text="${product.amount} + ' ' + #{app.units.__${product.unit.name}__}"></td>
+					<td>
+					
+					<form method="post">
+						<div class="input-group input-group-sm">
+							<input type="hidden" id="productId" name="productId" th:value=${product.id} requred="requred"> 
+							<input type="hidden" id="chequeId" name="chequeId" th:value=${param.chequeId} requred="requred">
+							<input type="number" class="form-control" name="amount" th:placeholder="#{products.placeholder.putInAmount}" requred="requred" max="${product.amount}" min="1">
+							
+							<div class="input-group-btn">
+								<button type="submit" formaction="/cp/addproduct"
+									class="btn btn-primary btn-sm" th:text="#{products.button.label.addToCheque}"></button>
+							</div>
+						</div>
+					</form>
+					
+					</td>
+					<td>
+					<form method="get">
+						<input type="hidden" th:value="${product.id}" name="id" />
+						<button type="submit" formaction="edit"	class="btn btn-primary btn-sm" th:text="#{products.button.label.edit}">Edit</button>
+					</form>
+					</td>
+					<td>
+					<form method="post">
+						<input type="hidden" th:value="${product.id}" name="id" />
+						<button tye="submit" formaction="delete" class="btn btn-primary btn-sm" th:text="#{products.button.label.delete}">Delete</button>
+					</form>
+					</td>
+				</tr>
+			</table>
+
+			<div th:if="${pages.size < 1}" th:each="pageN : ${pages}">
+				<a th:href="@{${currentURL}(pageN=${pageN}}" th:text="${pageN}"></a>
+			</div>
+
+
+		<!-- products pagination -->
+		<nav aria-label="Pagination" th:if="${products.totalPages > 1}">
+			<ul class="pagination justify-content-center font-weight-bold">
+				<li class="page-item"
+					th:classappend="${products.number == 0} ? 'disabled'"><a
+					class="page-link"
+					th:href="@{/products/all?page={id}(id=${products.number < 2 ? 1 : products.number})}"
+					aria-label="Previous" title="Previous Page" data-toggle="tooltip">
+						<span aria-hidden="true">&laquo;</span>
+				</a></li>
+				<li class="page-item"
+					th:classappend="${i == products.number + 1} ? 'active'"
+					th:each="i : ${#numbers.sequence( 1, products.totalPages, 1)}">
+					<a class="page-link" th:href="@{__${#httpServletRequest.requestURI}__?page={id}(id=${i})}"
+					th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
+				</li>
+				<li class="page-item"
+					th:classappend="${products.number + 1 == products.totalPages} ? 'disabled'">
+					<a class="page-link"
+					th:href="@{/products/all?page={id}(id=${products.number + 2})}"
+					aria-label="Next" title="Next Page" data-toggle="tooltip"> <span
+						aria-hidden="true">&raquo;</span>
+				</a>
+				</li>
+			</ul>
+</nav>
+
+</div>
+
+<div th:if="${!products.hasContent}" class="alert alert-info" th:text="#{products.text.empty}">No products yet</div>
+
+		<div class="container">
+			<form method=get th:action="@{add}">
+				<button type="submit" formaction="add"
+					class="btn btn-info btn-md" th:text="#{products.button.label.add}">Add</button>
+			</form>
+
+		</div>
+		
+		
+<th:block th:insert="fragments/footer.html"> </th:block>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html  xmlns:th="https://www.thymeleaf.org" 
+  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title th:text="#{app.title}+#{product.title}"></title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+	crossorigin="anonymous">
+</head>
+<body>
+	<header th:insert="fragments/header.html"> </header>
+
+	<div class="container">
+		<h2 th:text="#{product.title}"></h2>
+	</div>
+	<div class="container">
+		<form action="add" method="post" th:object="${product}">
+			<input type="hidden" name="id" th:field="*{id}">
+			<table>
+				<tr>
+					<td><label for="name" th:text="#{product.label.name}" required="required">Name:</label></td>
+					<td><input type="text" th:field="*{name}" name="name"></td>
+				</tr>
+				<tr>
+					<td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</td>
+				</tr>
+				<tr>
+					<td><label for="price" th:text="#{product.label.price}" required="required" >Price:</label></td>
+					<td><input type="number" th:field="*{price}" name="price" step=".01" min="0.01"></td>
+				</tr>
+				<tr>
+					<td th:if="${#fields.hasErrors('price')}" th:errors="*{price}" >Price Error</td>
+				</tr>
+				<tr>
+					<td><label for="amount" th:text="#{product.label.amount} " required="required">Amount:</label></td>
+					<td> <input type="number" th:field="*{amount}" name="amount" min="1"></td>
+				</tr>
+				<tr>
+					<td th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" >Amount	Error</td>
+				</tr>
+				<tr>
+					<td><label for="unit" th:text="#{product.label.units}" required="required">Units:</label></td>
+					<td><select	th:field="*{unit}">
+							<option th:each="unitv : ${unitsvalues}" th:label="#{app.units.__${unitv.name}__}" 
+							th:value="${unitv.id}"	th:selected="(${unitv} == *{unit})"}></option>
+					</select></td>
+				</tr>
+				<tr>
+					<td th:if="${#fields.hasErrors('unit')}" th:errors="*{unit}">Units Error</td>
+				</tr>
+			</table>
+			<button type="submit" class="btn btn-primary btn-md" th:text="#{product.button.label.save}">Save</button>
+
+		</form>
+	</div>
+	<th:block th:insert="fragments/footer.html">
+	</th:block>

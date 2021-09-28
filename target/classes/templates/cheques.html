@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html  xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title th:text="#{app.title}+#{cheques.title}"></title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+	crossorigin="anonymous">
+</head>
+<body>
+<header th:insert="fragments/header.html"> </header>
+
+
+	<div class="container" >
+		<h2 th:text = "#{cheques.title}">Cheques</h2>
+
+</div>
+<br>
+<th:block th:insert="fragments/messages.html"> </th:block>
+<div  th:if="${cheques.hasContent}">	
+		<span th:text="${cheques.getTotalElements}"></span>&nbsp;<span th:text="#{cheques.text.totalnumber}"></span>
+		
+			<table class="table table-striped">
+				<thead class="font-weight-bold">
+					<tr>
+						<td th:text="#{cheques.table.label.id}">Id</td>
+						<td th:text="#{cheques.table.label.date}">Date</td>
+						<td th:text="#{cheques.table.label.cost}">Cost</td>
+						<td th:text="#{cheques.table.label.status}">Status</td>
+						<td th:text="#{cheques.table.label.createdBy}">Created by</td>
+						<td></td>
+						<td></td>
+					</tr>
+				</thead>
+				<tr th:each="cheque : ${cheques}">
+					<td th:text="${cheque.id}"></td>
+					<td th:text="${#temporals.format(cheque.dateCreated, 'dd-MM-yyyy HH:mm:ss')}"></td>
+					<td th:text="${cheque.cost}"></td>
+					<td>
+					<span th:text="${cheque.dateCreated == null} ? #{cheques.status.open}
+								: (${cheque.cancelledDate == null}? #{cheques.status.closed}
+								: #{cheques.status.cancelled} + ${cheque.cancelledBy.name} + #{cheques.status.cancelledOn} + ${cheque.cancelledDate})"></span>
+					</td>
+					<td><span th:text="${cheque.createdBy == null}? '' : ${cheque.createdBy.name}"></span></td>
+					<td>
+					<form method="get">
+					<input type="hidden" name="chequeId" id="chequeId" th:value="${cheque.id}">
+					<button type="submit" formaction="edit" class="btn btn-primary btn-sm" th:text="#{cheques.button.label.__${cheque.dateCreated == null? 'edit':'show'}__}"></button>
+					</form>
+					</td>
+					<td>
+					
+					</td>
+				</tr>
+			</table>
+
+			<div th:if="${pages.size < 1}" th:each="pageN : ${pages}">
+				<a th:href="@{${currentURL}(pageN=${pageN}}" th:text="${pageN}"></a>
+			</div>
+
+
+	<!-- products pagination -->
+	<!--/*	<nav aria-label="Pagination" th:if="${cheques.totalPages > 1}">
+			<ul class="pagination justify-content-center font-weight-bold">
+				<li class="page-item"
+					th:classappend="${cheques.number == 0} ? 'disabled'"><a
+					class="page-link"
+					th:href="@{/cheques/all?page={id}(id=${cheques.number < 2 ? 1 : cheques.number})}"
+					aria-label="Previous" title="Previous Page" data-toggle="tooltip">
+						<span aria-hidden="true">&laquo;</span>
+				</a></li>
+				<li class="page-item"
+					th:classappend="${i == cheques.number + 1} ? 'active'"
+					th:each="i : ${#cheques.sequence( 1, cheques.totalPages, 1)}">
+					<a class="page-link" th:href="@{__${#httpServletRequest.requestURI}__?page={id}(id=${i})}"
+					th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
+				</li>
+				<li class="page-item"
+					th:classappend="${cheques.number + 1 == cheques.totalPages} ? 'disabled'">
+					<a class="page-link"
+					th:href="@{/cheques/all?page={id}(id=${cheques.number + 2})}"
+					aria-label="Next" title="Next Page" data-toggle="tooltip"> <span
+						aria-hidden="true">&raquo;</span>
+				</a>
+				</li>
+			</ul>*/-->
+</nav>
+</div>
+
+
+<div th:if="${!cheques.hasContent}" class="alert alert-info" th:text="#{cheques.text.empty}">No cheques yet</div>
+
+		<div class="container">
+			<form method=post th:action="@{add}">
+				<button type="submit" formaction="add"
+					class="btn btn-info btn-md" th:text="#{cheques.button.label.newCheque}">Add</button>
+			</form>
+
+		</div>
+		
+		
+<th:block th:insert="fragments/footer.html"> </th:block>
