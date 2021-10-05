@@ -1,11 +1,14 @@
 package com.cashier.springboot.models;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,18 +17,23 @@ import javax.persistence.*;
 @Entity(name = "users")
 @Table(name = "users")
 public class User implements UserDetails {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	@Column(nullable = false)
-	private String name;
+	private String username;
 
 	@Column(unique = true, nullable = false)
 	private String login;
  
 	@NotNull
 	private String password;
+	
+	@NotNull
+	private boolean enabled;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
@@ -35,13 +43,20 @@ public class User implements UserDetails {
             )
 	private Set<Role> roles = new HashSet<>();
 	
-
+	@Transient
+	public boolean hasRole(String... roles) {
+		Stream<String> requiredRoles = Arrays.stream(roles);
+		Stream<String> availableRoles = getAuthorities().stream().map(GrantedAuthority::getAuthority);
+		
+		return requiredRoles.anyMatch(role -> availableRoles.anyMatch(role::equals));
+	}
+	
 	public int getId() {
 		return id;
 	}
 
-	public String getName() {
-		return name;
+	public String getUsername() {
+		return username;
 	}
 	
 	public String getLogin() {
@@ -52,16 +67,12 @@ public class User implements UserDetails {
 		return password;
 	}
 
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	public void setName(String username) {
-		this.name = username;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public void setLogin(String login) {
@@ -78,12 +89,7 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return getRoles();
-	}
-
-	@Override
-	public String getUsername() {
-		return login;
+		return roles;
 	}
 
 	@Override
@@ -103,6 +109,6 @@ public class User implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return enabled;
 	}
 }

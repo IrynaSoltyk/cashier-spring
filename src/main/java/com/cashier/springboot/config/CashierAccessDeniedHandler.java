@@ -13,8 +13,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 
 public class CashierAccessDeniedHandler  implements AccessDeniedHandler {
 
-	  //  public static final Logger LOG
-	    //  = Logger.getLogger();
 
 	    @Override
 	    public void handle(
@@ -22,14 +20,7 @@ public class CashierAccessDeniedHandler  implements AccessDeniedHandler {
 	      HttpServletResponse response, 
 	      AccessDeniedException exc) throws IOException, ServletException {
 	        
-	        Authentication auth 
-	          = SecurityContextHolder.getContext().getAuthentication();
-	        if (auth != null) {
-	        //    LOG.warn("User: " + auth.getName() 
-	         //     + " attempted to access the protected URL: "
-	        //      + request.getRequestURI());
-	        }
-
-	        response.sendRedirect(request.getContextPath() + "/403");
+	        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	      	        response.sendRedirect(request.getContextPath() + "/403");
 	    }
 	}

@@ -2,15 +2,17 @@
 	<div class="col11">
 		<div th:fragment="header" class="btn-group">
 			<form method="get">
+				<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_CASHIER','ROLE_COMMODITYEXPERT')}">
 				<button formaction="/products/all"
 					class="btn btn-outline-info btn-sm" th:text="#{products.title}">Products</button>
-
+				<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_CASHIER')}">
 				<button formaction="/cheques/all"
 					class="btn btn-outline-info btn-sm" th:text="#{cheques.title}">Cheques</button>
-
+				</span>
+				<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_MANAGER')}">
 				<button formaction="/shifts/all"
 					class="btn  btn-outline-info btn-sm" th:text="#{shifts.title}">Shift</button>
-
+				</span>
 				<button formaction="/logout" class="btn btn-outline-info btn-sm" th:text="#{app.menu.logout}">Logout</button>
 			</form>
 		</div>
@@ -18,8 +20,8 @@
 		<div class=" navbar container col1  sticky-to justify-content-end">
 
 			<div class=row>
-				<!-- /*<div sec:authorize="isAuthenticated()"> Authenticated as <span th:text ="${#authentication.getPrincipal().getUser().getFirstName()}"></span></div>
-*/-->
+			<span th:text="${#request.userPrincipal.principal.username}"></span>
+				
 				<div class="nav-item">
 					<a class="nav-link" href="?sessionLocale=en">En</a>
 				</div>
@@ -28,7 +30,7 @@
 				</div>
 			</div>
 		</div>
-	
+	<!-- /*<span th:text ="${#authentication.getPrincipal().getUser().getUsername()}"></span>*/-->
 </div>
 
 </div>

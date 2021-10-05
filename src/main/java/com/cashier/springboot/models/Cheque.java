@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.Transient;
+
 import lombok.Getter;
 import lombok.Setter;
 @Getter
@@ -51,7 +53,8 @@ public class Cheque {
 	@ManyToOne
     @JoinColumn(name = "cancelled_by")
 	private User cancelledBy;
-		
+	
+	@Transient	
 	public BigDecimal getCost() {
 		return products.stream().map(a -> a.getTotalPrice()).reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
 	}

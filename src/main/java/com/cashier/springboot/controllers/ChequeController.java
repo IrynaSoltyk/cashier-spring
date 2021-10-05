@@ -1,12 +1,17 @@
 package com.cashier.springboot.controllers;
 
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,13 +58,13 @@ public class ChequeController {
 			return "redirect:/cheques/all";
 		}
 		Cheque cheque = new Cheque();
-		User mock = new User();/// take from session
-		mock.setId(1);
-		cheque.setCreatedBy(mock);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
+		cheque.setCreatedBy(user);
 		cheque.setShiftIdOpened(openShiftsList.get(0));
-		List<Unit> units = unitRepository.findAll();
 		chequeRepository.save(cheque);
 		
+	//	List<Unit> units = unitRepository.findAll();
 		redirectAttributes.addAttribute("chequeId", cheque.getId());
 		return "redirect:/cheques/edit";
 	}
@@ -112,8 +117,8 @@ public class ChequeController {
 		redirectAttributes.addFlashAttribute("successMsg", "Cheque cancelled successfully");
 		Cheque cheque = chequeRepository.getById(chequeId);
 		cheque.setCancelledDate(Instant.now());
-		User user = new User();//mock get from db
-		user.setId(3);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
 		cheque.setCancelledBy(user);
 		chequeRepository.save(cheque);
 		redirectAttributes.addAttribute("chequeId", cheque.getId());

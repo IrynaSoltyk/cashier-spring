@@ -41,9 +41,9 @@
 					<td>
 					<span th:text="${cheque.dateCreated == null} ? #{cheques.status.open}
 								: (${cheque.cancelledDate == null}? #{cheques.status.closed}
-								: #{cheques.status.cancelled} + ${cheque.cancelledBy.name} + #{cheques.status.cancelledOn} + ${cheque.cancelledDate})"></span>
+								: #{cheques.status.cancelled} + ${cheque.cancelledBy.username} + #{cheques.status.cancelledOn} + ${cheque.cancelledDate})"></span>
 					</td>
-					<td><span th:text="${cheque.createdBy == null}? '' : ${cheque.createdBy.name}"></span></td>
+					<td><span th:text="${cheque.createdBy == null}? '' : ${cheque.createdBy.username}"></span></td>
 					<td>
 					<form method="get">
 					<input type="hidden" name="chequeId" id="chequeId" th:value="${cheque.id}">

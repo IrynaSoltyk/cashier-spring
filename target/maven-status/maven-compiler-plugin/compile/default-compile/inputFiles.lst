@@ -5,6 +5,7 @@ C:\Work\Spring\src\main\java\com\cashier\springboot\Application.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\controllers\DefaultController.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\models\Report.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\models\ChequeProduct.java
+C:\Work\Spring\src\main\java\com\cashier\springboot\config\CustomUserDetailsService.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\config\CashierAccessDeniedHandler.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\config\CashierUrlAuthenticationSuccessHandler.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\repository\UnitRepository.java

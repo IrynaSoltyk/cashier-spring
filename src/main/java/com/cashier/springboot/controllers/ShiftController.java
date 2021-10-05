@@ -1,12 +1,13 @@
 package com.cashier.springboot.controllers;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cashier.springboot.models.Cheque;
-import com.cashier.springboot.models.Report;
 import com.cashier.springboot.models.Shift;
 import com.cashier.springboot.models.User;
 import com.cashier.springboot.repository.ShiftRepository;
@@ -69,11 +68,11 @@ public class ShiftController {
 			map.addAttribute("errorMsg" , "There are still open shifts left. Close current shift first.");
 			return new ModelAndView("redirect:/shifts/all", map);
 		} 			
-		User mock = new User();// take from session
-		mock.setId(3);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User)authentication.getPrincipal();
 		Shift shift = new Shift();
 		shift.setBeginDate(Instant.now());
-		shift.setUser(mock);
+		shift.setUser(user);
 		
 		shiftRepository.save(shift);
 		map.addAttribute("successMsg","New shift is open");

@@ -50,7 +50,7 @@
 					<td th:text="${product.price} + ' ' + #{app.text.currency}"></td>
 					<td th:text="${product.amount} + ' ' + #{app.units.__${product.unit.name}__}"></td>
 					<td>
-					
+					<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_CASHIER') && param.chequeId != null}">
 					<form method="post">
 						<div class="input-group input-group-sm">
 							<input type="hidden" id="productId" name="productId" th:value=${product.id} requred="requred"> 
@@ -63,19 +63,23 @@
 							</div>
 						</div>
 					</form>
-					
+					</span>
 					</td>
 					<td>
+					<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_COMMODITYEXPERT')}">
 					<form method="get">
 						<input type="hidden" th:value="${product.id}" name="id" />
 						<button type="submit" formaction="edit"	class="btn btn-primary btn-sm" th:text="#{products.button.label.edit}">Edit</button>
 					</form>
+					</span>
 					</td>
 					<td>
+					<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_COMMODITYEXPERT')}">
 					<form method="post">
 						<input type="hidden" th:value="${product.id}" name="id" />
 						<button tye="submit" formaction="delete" class="btn btn-primary btn-sm" th:text="#{products.button.label.delete}">Delete</button>
 					</form>
+					</span>
 					</td>
 				</tr>
 			</table>
@@ -115,7 +119,7 @@
 </div>
 
 <div th:if="${!products.hasContent}" class="alert alert-info" th:text="#{products.text.empty}">No products yet</div>
-
+<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_COMMODITYEXPERT')}">
 		<div class="container">
 			<form method=get th:action="@{add}">
 				<button type="submit" formaction="add"
@@ -123,6 +127,6 @@
 			</form>
 
 		</div>
-		
+</span>		
 		
 <th:block th:insert="fragments/footer.html"> </th:block>

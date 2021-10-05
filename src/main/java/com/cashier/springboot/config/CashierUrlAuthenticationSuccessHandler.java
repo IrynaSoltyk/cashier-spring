@@ -51,7 +51,6 @@ public class CashierUrlAuthenticationSuccessHandler implements AuthenticationSuc
 	        final String targetUrl = determineTargetUrl(authentication);
 
 	        if (response.isCommitted()) {
-	           // logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
 	            return;
 	        }
 

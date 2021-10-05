@@ -7,6 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+
 You re not authorised to perform this operation
 <a href="history.back()">Go back</a>
 </body>

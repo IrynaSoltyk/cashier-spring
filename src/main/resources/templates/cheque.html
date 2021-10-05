@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html  xmlns:th="https://www.thymeleaf.org" 
-  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
 <meta charset="UTF-8">
-<title th:text="#{app.title}+#{cheque.title} + ${cheque.id == 0? '' : cheque.id}"></title>
+<title
+	th:text="#{app.title}+#{cheque.title} + ${cheque.id == 0? '' : cheque.id}"></title>
 <link
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
 	rel="stylesheet"
@@ -11,101 +13,136 @@
 	crossorigin="anonymous">
 </head>
 <body>
-<header th:insert="fragments/header.html"> </header>
+	<header th:insert="fragments/header.html"> </header>
 
 	<div class="container">
 
-		<h2 th:text = "#{cheque.title} +' '+ ${cheque.id}"></h2>
-		<h7 th:text = "#{cheque.text.shift} +' '+ ${cheque.shiftIdOpened.id}"></h6>
-		<small th:text = "${cheque.createdBy.name}"></small>
-		<small th:unless = "${cheque.dateCreated == null}" th:text = "${#temporals.format(cheque.dateCreated, 'dd-MM-yyyy HH:mm:ss')}"></small>
+		<h2 th:text="#{cheque.title} +' '+ ${cheque.id}"></h2>
+		<h7 th:text="#{cheque.text.shift} +' '+ ${cheque.shiftIdOpened.id}">
+		</h7>
+		<small th:text="${cheque.createdBy.username}"></small> 
+		<small th:unless="${cheque.dateCreated == null}"
+			th:text="${#temporals.format(cheque.dateCreated, 'dd-MM-yyyy HH:mm:ss')}"></small>
 	</div>
-	
-	<th:block th:insert="fragments/messages.html"> </th:block>
-	
+
+	<th:block th:insert="fragments/messages.html">
+	</th:block>
+
 	<div class="container" th:unless="${#lists.isEmpty(cheque.products)}">
-				<table class="table table-striped">
-					<thead>
-						<tr class="font-weight-bold">
-							<td th:text="#{products.table.label.id}" ></td>
-							<td th:text="#{products.table.label.name}" ></td>
-							<td th:text="#{products.table.label.price}"></td>
-							<td th:text="#{products.table.label.amount}"></td>
-							<td></td>
-							<td></td>
-						</tr>
-					</thead>
-					<tr th:unless="${cheque.products == null}" th:each="cpproduct : ${cheque.products}">
-							<td th:text="${cpproduct.product.id}"></td>
-							<td th:text="${cpproduct.product.name}"></td>
-							<td><span th:text="${cpproduct.price}"></span>&nbsp;<span th:text="#{app.text.currency}"></span></td>
-							<td>
-							<form method="post" id="product" role="form">
-									<!-- /*<input type="hidden" id="chequeId" name="chequeId"	value=${cheque.id}>-->
-									<input type="hidden" id="cpId" name="cpId" th:value=${cpproduct.id}> 
-							<input  type="number" name="amount" id="amount"	th:value="${cpproduct.amount}" th:disabled="${cheque.dateCreated != null}? 'disabled':''">
-								&nbsp;<span th:text="${cpproduct.product.unit.name}"></span></td>
-							<td>
-							<button type="submit" formaction="/cp/editproduct" class="btn btn-primary btn-sm" th:text="#{cheque.button.label.edit}">Edit</button></td>
-							<td>
-								<button type="submit" formaction="/cp/delete"
-									class="btn btn-primary btn-sm" th:text="#{cheque.button.label.remove}">Remove</button>
-								</form> 
-								<div sec:authorize="hasRole('MANAGER')">
-										<form method="post">
-											<input type="hidden" id="cpId" name="cpId" th:value=${cpproduct.id}>
-											<button type="submit" formaction="/cp/cancel"
-												class="btn btn-primary btn-sm" th:text="#{cheque.button.label.cancel}">Cancel</button>
-										</form>
-								</div>
-							</td>
+		<table class="table table-striped">
+			<thead>
+				<tr class="font-weight-bold">
+					<td th:text="#{products.table.label.id}"></td>
+					<td th:text="#{products.table.label.name}"></td>
+					<td th:text="#{products.table.label.price}"></td>
+					<td th:text="#{products.table.label.amount}"></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</thead>
+			<tr th:unless="${cheque.products == null}"
+				th:each="cpproduct : ${cheque.products}">
+				<td th:text="${cpproduct.product.id}"></td>
+				<td th:text="${cpproduct.product.name}"></td>
+				<td><span th:text="${cpproduct.price}"></span>&nbsp;<span
+					th:text="#{app.text.currency}"></span></td>
+				<td>
+					<form method="post" id="product" role="form">
+						<!-- /*<input type="hidden" id="chequeId" name="chequeId"	value=${cheque.id}>-->
+						<input type="hidden" id="cpId" name="cpId"
+							th:value=${cpproduct.id}> <input type="number"
+							name="amount" id="amount" th:value="${cpproduct.amount}"
+							th:disabled="${cheque.dateCreated != null}? 'true':'false'">
+						&nbsp;<span th:text="${cpproduct.product.unit.name}"></span>
+				</td>
+				<td>
+				<span th:if="${cheque.dateCreated == null}">
+					<button type="submit" formaction="/cp/editproduct"
+						class="btn btn-primary btn-sm"
+						th:text="#{cheque.button.label.edit}">Edit</button>
+				</span>
+				</td>
+				<td>
+					<span th:if="${cheque.dateCreated == null}">
+					<button type="submit" formaction="/cp/delete"
+						class="btn btn-primary btn-sm"
+						th:text="#{cheque.button.label.remove}">Remove</button>
+					</form>
+					</span>
+					<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_MANAGER') && cheque.dateCreated != null}">
+						<form method="post">
+							<input type="hidden" id="cpId" name="cpId"
+								th:value=${cpproduct.id}>
+							<button type="submit" formaction="/cp/cancel"
+								class="btn btn-primary btn-sm"
+								th:text="#{cheque.button.label.cancel}">Cancel</button>
+						</form>
+					</span>
+				</td>
 
-					</tr>
+			</tr>
 
-				</table>
-				<table th:unless="${#lists.isEmpty(cheque.products)}">
-					<tr>
-						<td colspan="6">
-								<div th:unless="${cheque.cancelledDate == null}"
-             th:text="#{cheque.status.cancelled} + ${cheque.cancelledBy.name} + #{cheque.status.cancelledOn} + ${cheque.cancelledDate}">
-              
-									<h3 th:text="#{cheque.text.totalcost} + ${cheque.totalCost} + #{app.text.currency}"></h3>
-								</td>
-					</tr>
-				</table>
-</div>
-				<br>
-<div th:if="${#lists.isEmpty(cheque.products)}" class="alert alert-info" th:text="#{cheque.text.empty}">No products yet in this cheque</div>
-
-	
-<div class="container">
-	<form method="get">
-		<input type="hidden" id="chequeId" name="chequeId" th:value=${cheque.id}>
-				<div class="container">
-					<button type="submit" formaction="/cp/addproduct" class="btn btn-primary btn-md" th:text="#{cheque.button.label.addProduct}">Add product</button>
-
+		</table>
+		<table th:unless="${#lists.isEmpty(cheque.products)}">
+			<tr>
+				<td colspan="6">
+				<div th:if ="${cheque.cancelledDate == null && cheque.products != null}" >
+				<h4 th:text="#{cheque.text.totalcost} +': '+ ${cheque.getCost()} +' '+ #{app.text.currency}"></h4>
 				</div>
-				</form>
-				<br>
-				<form method="post">
-		<input type="hidden" id="chequeId" name="chequeId" th:value=${cheque.id}>
-				<div class="container" th:unless="${#lists.isEmpty(cheque.products)}">
-							<button type="submit" formaction="close"
-								class="btn btn-info btn-md" th:text="#{cheque.button.label.closeCheque}" >Close this cheque</button>
+				<div th:unless="${cheque.cancelledDate == null}"
+						th:text="#{cheque.status.cancelled} +' '+ ${cheque.cancelledBy.username} +' '+ #{cheque.status.cancelledOn} +' '+ ${cheque.cancelledDate}">
 				</div>
-				<br>
-
-				<div class="container" th:if="${#lists.isEmpty(cheque.products)}">
-							<button type="submit" formaction="delete"
-								class="btn btn-info btn-md" th:text="#{cheque.button.label.deleteCheque}">Delete this cheque</button>
-				</div>
-				<br>
-			
-				<div class="container">
-							<button type="submit" formaction="/cheques/cancel"
-								class="btn btn-info btn-md" th:text="#{cheque.button.label.cancelCheque}">Cancel cheque</button>
-				</div>
-	</form>
+						
+				</td>
+			</tr>
+		</table>
 	</div>
-		
-<th:block th:insert="fragments/footer.html"> </th:block>
+	<br>
+	<div th:if="${#lists.isEmpty(cheque.products)}"
+		class="alert alert-info" th:text="#{cheque.text.empty}">No
+		products yet in this cheque
+	</div>
+
+
+	<div class="container">
+	<span th:if="${cheque.dateCreated == null}">
+		<form method="get">
+			<input type="hidden" id="chequeId" name="chequeId"
+				th:value=${cheque.id}>
+			<div class="container">
+				<button type="submit" formaction="/cp/addproduct"
+					class="btn btn-primary btn-md"
+					th:text="#{cheque.button.label.addProduct}">Add product</button>
+
+			</div>
+		</form>
+		<br>
+	</span>
+		<form method="post">
+		<span th:if="${cheque.dateCreated == null}">
+			<input type="hidden" id="chequeId" name="chequeId"
+				th:value=${cheque.id}>
+			<div class="container" th:unless="${#lists.isEmpty(cheque.products)}">
+				<button type="submit" formaction="close" class="btn btn-info btn-md"
+					th:text="#{cheque.button.label.closeCheque}">Close this	cheque</button>
+			</div>
+			<br>
+		</span>
+			<div class="container" th:if="${#lists.isEmpty(cheque.products)}">
+				<button type="submit" formaction="delete"
+					class="btn btn-info btn-md"
+					th:text="#{cheque.button.label.deleteCheque}">Delete this cheque</button>
+			</div>
+			<br>
+			<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_MANAGER') && cheque.dateCreated != null}">
+			<div class="container">
+				<button type="submit" formaction="/cheques/cancel"
+					class="btn btn-info btn-md"
+					th:text="#{cheque.button.label.cancelCheque}">Cancel cheque</button>
+			</div>
+			</span>
+		</form>
+	</div>
+
+	<th:block th:insert="fragments/footer.html">
+	</th:block>
