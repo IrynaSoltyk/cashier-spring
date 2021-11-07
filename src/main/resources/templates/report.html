@@ -16,8 +16,20 @@
 </head>
 <body>
 <th:block th:insert="fragments/header.html"/>
-<div class="container" id="printarea" name="printarea">
-<h2>L&nbsp;<span th:text="#{report.title}">Report</span></h2>
+	<script>
+		function printDiv(divName){
+			var printContents = document.getElementById(divName).innerHTML;
+			var originalContents = document.body.innerHTML;
+
+			document.body.innerHTML = printContents;
+			window.print();
+			document.body.innerHTML = originalContents;
+
+		}
+	</script>
+<div  id="toprint">
+<div class="container" >
+<h2><span th:text="${type}+' '"></span> <span th:text="#{report.title}">Report</span></h2>
 	Shift # <span th:text="${report.shiftId}"></span>
 	<span th:text="${user}"></span>
 	<table class="table">
@@ -45,8 +57,9 @@
 		</tr>
 	</table>
 </div>
+</div>
 <div class="container">
-<button onclick="window.print();" class="btn btn-info" th:text="#{report.button.print}">Print report</button>
+<button onclick="printDiv('toprint')" class="btn btn-info" th:text="#{report.button.print}">Print report</button>
 </div>
 
 <th:block th:insert="fragments/footer.html"> </th:block>

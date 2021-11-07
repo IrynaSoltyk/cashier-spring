@@ -29,7 +29,7 @@ public class Product {
 	private int id;
     
     @Column(unique = true, nullable = true)
-    @NotBlank
+    @NotBlank 
 	private String name;
     
     @ManyToOne(fetch = FetchType.EAGER)
@@ -48,39 +48,4 @@ public class Product {
 		return id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	public Unit getUnit() {
-		return unit;
-	}
-
-	public int getAmount() {
-		return amount;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
-	public void setUnit(Unit unit) {
-		this.unit = unit;
-	}
-
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
 }

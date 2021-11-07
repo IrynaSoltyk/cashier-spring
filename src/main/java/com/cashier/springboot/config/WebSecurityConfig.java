@@ -1,16 +1,13 @@
 package com.cashier.springboot.config;
 import java.util.Arrays;
 
-import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -30,9 +27,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		.csrf().disable()
 		 	.authorizeRequests()
 		 	.antMatchers("/shifts/*", "/shift/*", "/cp/cancel", "/cheques/cancel","/report").hasRole("MANAGER")
-		 	.antMatchers("/products/all").hasAnyRole("COMMODITYEXPERT", "CASHIER")
+		 	.antMatchers("/products/all", "/products/search").hasAnyRole("COMMODITYEXPERT", "CASHIER")
             .antMatchers("/products/*").hasRole("COMMODITYEXPERT")
-            .antMatchers("/cheques/*", "/cp/addproduct", "/cp/delete", "/cp/editproduct", "/products/search").hasRole("CASHIER")
+            .antMatchers("/cheques/*", "/cp/addproduct", "/cp/delete", "/cp/editproduct").hasRole("CASHIER")
             
             .anyRequest().authenticated()
             .and()

@@ -36,9 +36,10 @@
 					<td th:text="${#temporals.format(shift.endDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
 					<td>
 					<form method="get">
-					<input type="hidden" name="shiftId" id="shiftId" th:value="${shift.id}">
-					<button th:if="${shift.endDate == null}" type="submit" formaction="report"class="btn btn-primary  btn-sm">Form Xreport</button>
-					<button th:unless="${shift.endDate == null}" type="submit" formaction="report" class="btn btn-primary btn-sm">Show Z report</button>
+					<input type = "hidden" name="shiftId" id="shiftId" th:value="${shift.id}">
+					<input type = "hidden" name = "type" id = "type" th:value = "${shift.endDate == null ? 'X' : 'Z'}">
+					<button th:if="${shift.endDate == null}" type="submit" formaction="/report/compose"class="btn btn-primary  btn-sm">Form X report</button>
+					<button th:unless="${shift.endDate == null}" type="submit" formaction="/report/compose" class="btn btn-primary btn-sm">Show Z report</button>
 					</form>
 					
 					</td>
@@ -46,33 +47,39 @@
 				</tr>
 		</table>
 		
-		
+<div  th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+				<div th:if="${pages.size < 1}" th:each="pageN : ${pages}">
+					<a th:href="@{${urlBuilder.replaceQueryParam('pageN', pageN).toUriString()}}" th:text="${pageN}"></a>
+				</div>
+	</div>
+	<div  th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
 		<!-- shifts pagination -->
 		<nav aria-label="Pagination" th:if="${shifts.totalPages > 1}">
 			<ul class="pagination justify-content-center font-weight-bold">
 				<li class="page-item"
 					th:classappend="${shifts.number == 0} ? 'disabled'"><a
 					class="page-link"
-					th:href="@{/shifts/all?page={id}(id=${shifts.number < 2 ? 1 : shifts.number})}"
+					th:href="@{${urlBuilder.replaceQueryParam('page', __${shifts.number < 2 ? 1 : shifts.number}__).toUriString()}}"
 					aria-label="Previous" title="Previous Page" data-toggle="tooltip">
 						<span aria-hidden="true">&laquo;</span>
 				</a></li>
 				<li class="page-item"
 					th:classappend="${i == shifts.number + 1} ? 'active'"
 					th:each="i : ${#numbers.sequence( 1, shifts.totalPages, 1)}">
-					<a class="page-link" th:href="@{__${#httpServletRequest.requestURI}__?page={id}(id=${i})}"
+					<a class="page-link" th:href="@{${urlBuilder.replaceQueryParam('page', i).toUriString()}}"
 					th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
 				</li>
 				<li class="page-item"
 					th:classappend="${shifts.number + 1 == shifts.totalPages} ? 'disabled'">
 					<a class="page-link"
-					th:href="@{/shifts/all?page={id}(id=${shifts.number + 2})}"
+					th:href="@{${urlBuilder.replaceQueryParam('page', __${shifts.number + 2}__).toUriString()}}"
 					aria-label="Next" title="Next Page" data-toggle="tooltip"> <span
 						aria-hidden="true">&raquo;</span>
 				</a>
 				</li>
 			</ul>
 	</nav>
+</div>
 </div>		
 		
 		<div  th:if="${!shifts.hasContent}"class="alert alert-info" th:text="#{shifts.text.empty}">No shifts yet</div>

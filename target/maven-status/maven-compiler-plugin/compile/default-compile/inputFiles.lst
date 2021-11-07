@@ -11,12 +11,11 @@ C:\Work\Spring\src\main\java\com\cashier\springboot\config\CashierUrlAuthenticat
 C:\Work\Spring\src\main\java\com\cashier\springboot\repository\UnitRepository.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\repository\ChequeRepository.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\controllers\ProductController.java
-C:\Work\Spring\src\main\java\com\cashier\springboot\dao\ShiftDao.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\repository\ChequeProductRepository.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\models\Unit.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\controllers\ChequeController.java
-C:\Work\Spring\src\main\java\com\cashier\springboot\dao\ProductDao.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\repository\ProductRepository.java
+C:\Work\Spring\src\main\java\com\cashier\springboot\controllers\ReportController.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\config\WebSecurityConfig.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\repository\UserRepository.java
 C:\Work\Spring\src\main\java\com\cashier\springboot\controllers\ShiftController.java

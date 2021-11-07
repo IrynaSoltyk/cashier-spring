@@ -1,10 +1,8 @@
 package com.cashier.springboot.models;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.validation.constraints.NotNull;
 
@@ -12,8 +10,13 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity(name = "users")
 @Table(name = "users")
 public class User implements UserDetails {
@@ -44,49 +47,10 @@ public class User implements UserDetails {
 	private Set<Role> roles = new HashSet<>();
 	
 	@Transient
-	public boolean hasRole(String... roles) {
-		Stream<String> requiredRoles = Arrays.stream(roles);
-		Stream<String> availableRoles = getAuthorities().stream().map(GrantedAuthority::getAuthority);
-		
-		return requiredRoles.anyMatch(role -> availableRoles.anyMatch(role::equals));
+	public boolean hasRole(String role) {
+		return  getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(role));
 	}
 	
-	public int getId() {
-		return id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-	
-	public String getLogin() {
-		return login;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
-
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return roles;

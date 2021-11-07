@@ -17,7 +17,7 @@
 	<div class="container" >
 		<h2 th:text = "#{products.title}">Products</h2>
 
-		<div class="input-group" th:if="${products.hasContent}">
+		<div class="input-group" th:if="${products.hasContent} OR ${param.searchValue} != null">
 			<form method="get">
 				<input name="searchValue"class="form-control" required="true"
 				placeholder="Type the product name or id">
@@ -83,42 +83,43 @@
 					</td>
 				</tr>
 			</table>
-
-			<div th:if="${pages.size < 1}" th:each="pageN : ${pages}">
-				<a th:href="@{${currentURL}(pageN=${pageN}}" th:text="${pageN}"></a>
-			</div>
-
-
+	<div  th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+				<div th:if="${pages.size < 1}" th:each="pageN : ${pages}">
+					<a th:href="@{${urlBuilder.replaceQueryParam('pageN', pageN).toUriString()}}" th:text="${pageN}"></a>
+				</div>
+	</div>
+	<div  th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
 		<!-- products pagination -->
 		<nav aria-label="Pagination" th:if="${products.totalPages > 1}">
 			<ul class="pagination justify-content-center font-weight-bold">
 				<li class="page-item"
 					th:classappend="${products.number == 0} ? 'disabled'"><a
 					class="page-link"
-					th:href="@{/products/all?page={id}(id=${products.number < 2 ? 1 : products.number})}"
+					th:href="@{${urlBuilder.replaceQueryParam('page', __${products.number < 2 ? 1 : products.number}__).toUriString()}}"
 					aria-label="Previous" title="Previous Page" data-toggle="tooltip">
 						<span aria-hidden="true">&laquo;</span>
 				</a></li>
 				<li class="page-item"
 					th:classappend="${i == products.number + 1} ? 'active'"
 					th:each="i : ${#numbers.sequence( 1, products.totalPages, 1)}">
-					<a class="page-link" th:href="@{__${#httpServletRequest.requestURI}__?page={id}(id=${i})}"
+					<a class="page-link" th:href="@{${urlBuilder.replaceQueryParam('page', i).toUriString()}}"
 					th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
 				</li>
 				<li class="page-item"
 					th:classappend="${products.number + 1 == products.totalPages} ? 'disabled'">
 					<a class="page-link"
-					th:href="@{/products/all?page={id}(id=${products.number + 2})}"
+					th:href="@{${urlBuilder.replaceQueryParam('page', __${products.number + 2}__).toUriString()}}"
 					aria-label="Next" title="Next Page" data-toggle="tooltip"> <span
 						aria-hidden="true">&raquo;</span>
 				</a>
 				</li>
 			</ul>
-</nav>
-
+	</nav>
+</div>
 </div>
 
-<div th:if="${!products.hasContent}" class="alert alert-info" th:text="#{products.text.empty}">No products yet</div>
+<div th:if="${!products.hasContent}" class="alert alert-info" th:text="#{products.text.empty}">No products to show</div>
+
 <span th:if="${#request.userPrincipal.principal.hasRole('ROLE_COMMODITYEXPERT')}">
 		<div class="container">
 			<form method=get th:action="@{add}">

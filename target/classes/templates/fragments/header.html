@@ -2,9 +2,10 @@
 	<div class="col11">
 		<div th:fragment="header" class="btn-group">
 			<form method="get">
-				<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_CASHIER','ROLE_COMMODITYEXPERT')}">
+				<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_COMMODITYEXPERT') || #request.userPrincipal.principal.hasRole('ROLE_CASHIER')}">
 				<button formaction="/products/all"
 					class="btn btn-outline-info btn-sm" th:text="#{products.title}">Products</button>
+				</span>
 				<span th:if="${#request.userPrincipal.principal.hasRole('ROLE_CASHIER')}">
 				<button formaction="/cheques/all"
 					class="btn btn-outline-info btn-sm" th:text="#{cheques.title}">Cheques</button>
@@ -18,19 +19,18 @@
 		</div>
 </div>
 		<div class=" navbar container col1  sticky-to justify-content-end">
-
-			<div class=row>
+			<div class="row" th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
 			<span th:text="${#request.userPrincipal.principal.username}"></span>
+				<div class="nav-item">
+					<a th:href="${urlBuilder.replaceQueryParam('sessionLocale', 'en').toUriString()}" class="nav-link">En</a>
+				</div>
 				
 				<div class="nav-item">
-					<a class="nav-link" href="?sessionLocale=en">En</a>
-				</div>
-				<div class="nav-item">
-					<a class="nav-link" href="?sessionLocale=ua">Укр</a>
+					<a th:href="${urlBuilder.replaceQueryParam('sessionLocale', 'ua').toUriString()}" class="nav-link">Укр</a>
 				</div>
 			</div>
 		</div>
-	<!-- /*<span th:text ="${#authentication.getPrincipal().getUser().getUsername()}"></span>*/-->
+
 </div>
 
 </div>
