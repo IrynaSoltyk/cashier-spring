@@ -8,6 +8,7 @@ public class Report {
 	private BigDecimal closedCost;
 	private BigDecimal cancelledCost;
 	private int shiftId;
+	private String composedBy;
 
 	public int getClosed() {
 		return closed;
@@ -48,5 +49,14 @@ public class Report {
 	public void setShiftId(int shiftId) {
 		this.shiftId = shiftId;
 	}
+
+	public String getComposedBy() {
+		return composedBy;
+	}
+
+	public void setComposedBy(String composedBy) {
+		this.composedBy = composedBy;
+	}
+	
 
 }

@@ -1,14 +1,8 @@
 package com.cashier.springboot.controllers;
 
-import java.time.Instant;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,49 +12,36 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cashier.springboot.models.Cheque;
-import com.cashier.springboot.models.Shift;
 import com.cashier.springboot.models.Unit;
-import com.cashier.springboot.models.User;
-import com.cashier.springboot.repository.ChequeRepository;
-import com.cashier.springboot.repository.ShiftRepository;
-import com.cashier.springboot.repository.UnitRepository;
+import com.cashier.springboot.service.ChequeService;
+import com.cashier.springboot.service.UnitService;
 
 @Controller
 @RequestMapping(path = "/cheques")
 public class ChequeController {
+
 	@Autowired
-	ChequeRepository chequeRepository;
+	ChequeService chequeService; 
 	@Autowired
-	UnitRepository unitRepository;
-	@Autowired
-	ShiftRepository shiftRepository;
+	UnitService unitService;
 
 	
 	@GetMapping(path = "/all")
 	public ModelAndView getAllCheques(@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "5") int size) {
-		page--;
-		ModelAndView mav = new ModelAndView("cheques");
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-		mav.addObject("cheques", chequeRepository.findAll(pageable));
+			ModelAndView mav = new ModelAndView("cheques");
+			mav.addObject("cheques", chequeService.getAllCheques(page, size));
 		return mav;
 	}
 	
 	@PostMapping(path = "/add")
 	public String addCheque(RedirectAttributes redirectAttributes) {
-	// Get open shifts	
-		List<Shift> openShiftsList = shiftRepository.getOpenShift();
-		if(openShiftsList.isEmpty() | openShiftsList.size() > 1) {
+		Cheque cheque = chequeService.addCheque();
+		if (cheque == null) {
 			redirectAttributes.addFlashAttribute("errorMsg", "Shifts error. Possibly no open shifts.");
 			return "redirect:/cheques/all";
 		}
-		Cheque cheque = new Cheque();
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User user = (User)authentication.getPrincipal();
-		cheque.setCreatedBy(user);
-		cheque.setShiftIdOpened(openShiftsList.get(0));
-		chequeRepository.save(cheque);
-		
+	
 		redirectAttributes.addAttribute("chequeId", cheque.getId());
 		return "redirect:/cheques/edit";
 	}
@@ -68,8 +49,8 @@ public class ChequeController {
 	@GetMapping(path = "/edit")
 	public ModelAndView editCheque(@RequestParam int chequeId) {
 		ModelAndView mav = new ModelAndView("cheque");
-		Cheque cheque = chequeRepository.getById(chequeId);
-		List<Unit> units = unitRepository.findAll();
+		Cheque cheque = chequeService.editCheque(chequeId);
+		List<Unit> units = unitService.findAll();
 		mav.addObject("cheque", cheque);
 		mav.addObject("unitsvalues", units);
 		return mav;
@@ -77,47 +58,39 @@ public class ChequeController {
 	
 	@PostMapping(path="/delete")
 	public String deleteCheque(RedirectAttributes redirectAttributes, @RequestParam int chequeId) {
-		//check if cheque is closed
-		Cheque cheque = chequeRepository.getById(chequeId);
-		if (cheque.getDateCreated() != null) {
+		boolean success = chequeService.deleteCheque(chequeId);
+		if (!success) {
 			redirectAttributes.addFlashAttribute("errorMsg", "Cheque is already closed. You can't delete closed cheque. Only cancel one");
-			redirectAttributes.addAttribute("chequeId", cheque.getId());
+			redirectAttributes.addAttribute("chequeId", chequeId);
 			return "redirect:/cheques/edit";
 		}
-		chequeRepository.delete(cheque);
+		
 		redirectAttributes.addFlashAttribute("successMsg", "Cheque has been deleted successfully");
 		return "redirect:/cheques/all";
 	}
 	
 	@PostMapping(path="/close")
 	public String closeCheque(RedirectAttributes redirectAttributes, @RequestParam int chequeId) {
-		Cheque cheque = chequeRepository.getById(chequeId);
-		if (cheque.getDateCreated() != null) {
-			redirectAttributes.addFlashAttribute("errorMsg", "Cheque is already closed.");
-			redirectAttributes.addAttribute("chequeId", cheque.getId());
+		boolean success = chequeService.closeCheque(chequeId);
+		if (!success) {
+			redirectAttributes.addFlashAttribute("errorMsg", "Error deleting cheque. Possibly empty cheque.");
+			redirectAttributes.addAttribute("chequeId", chequeId);
 			return "redirect:/cheques/edit";
 		}
-		if (cheque.getProducts().isEmpty()) {
-			redirectAttributes.addFlashAttribute("errorMsg", "You can't close cheque without products. You can delete it");
-			redirectAttributes.addAttribute("chequeId", cheque.getId());
-			return "redirect:/cheques/edit";
-		}
-		cheque.setDateCreated(Instant.now());
-		chequeRepository.save(cheque);
+		redirectAttributes.addFlashAttribute("successMsg", "Cheque closed");
 		return "redirect:/cheques/all";	
 	}
 	
 	
 	@PostMapping(path="/cancel")
 	public String cancelCheque(RedirectAttributes redirectAttributes, @RequestParam int chequeId) {
-		redirectAttributes.addFlashAttribute("successMsg", "Cheque cancelled successfully");
-		Cheque cheque = chequeRepository.getById(chequeId);
-		cheque.setCancelledDate(Instant.now());
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User user = (User)authentication.getPrincipal();
-		cheque.setCancelledBy(user);
-		chequeRepository.save(cheque);
-		redirectAttributes.addAttribute("chequeId", cheque.getId());
+		boolean success = chequeService.cancelCheque(chequeId);
+		if (!success) {
+			redirectAttributes.addFlashAttribute("errorMsg", "Error canceling cheque");
+		} else {
+			redirectAttributes.addFlashAttribute("successMsg", "Cheque cancelled successfully");
+		}
+		redirectAttributes.addAttribute("chequeId", chequeId);
 		return "redirect:/cheques/edit";	
 	}
 	

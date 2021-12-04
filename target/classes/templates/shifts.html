@@ -33,7 +33,13 @@
 				<tr th:each="shift : ${shifts}">
 					<td th:text="${shift.id}"></td>
 					<td th:text="${#temporals.format(shift.beginDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
-					<td th:text="${#temporals.format(shift.endDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+					<td>
+					<span th:unless ="${shift.endDate == null}" th:text="${#temporals.format(shift.endDate, 'dd-MM-yyyy HH:mm:ss')}"></span>
+					<form method ="post" th:if = "${shift.endDate == null}">
+					<input type = "hidden" name="shiftId" id="shiftId" th:value="${shift.id}">
+					<button type="submit" formaction="/shifts/close/" class="btn btn-info btn-md" th:text="#{shifts.button.label.closeshift}">Close</button>
+					</form>
+					</td>
 					<td>
 					<form method="get">
 					<input type = "hidden" name="shiftId" id="shiftId" th:value="${shift.id}">
@@ -85,10 +91,7 @@
 		<div  th:if="${!shifts.hasContent}"class="alert alert-info" th:text="#{shifts.text.empty}">No shifts yet</div>
 		
 		<form method="post">
-		<div class="container">
-		<button type="submit" formaction="/shifts/close" class="btn btn-info btn-md" th:text="#{shifts.button.label.closeshift}">Close</button>
-		</div>
-		<br>
+		
 		<div class="container">
 		<button type="submit" formaction="/shifts/open" class="btn btn-info  btn-md" th:text="#{shifts.button.label.newshift}">Start new shift</button>
 		</div>

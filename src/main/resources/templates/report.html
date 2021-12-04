@@ -31,7 +31,7 @@
 <div class="container" >
 <h2><span th:text="${type}+' '"></span> <span th:text="#{report.title}">Report</span></h2>
 	Shift # <span th:text="${report.shiftId}"></span>
-	<span th:text="${user}"></span>
+	<span th:text="${report.composedBy}"></span>
 	<table class="table">
 		<tr class="active">
 			<td colspan="2"><h5 th:text="#{report.text.sell}">Sell</h5></td>

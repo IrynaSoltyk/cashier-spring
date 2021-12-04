@@ -48,10 +48,9 @@
 					th:text="#{app.text.currency}"></span></td>
 				<td>
 					<form method="post" id="product" role="form">
-						<!-- /*<input type="hidden" id="chequeId" name="chequeId"	value=${cheque.id}>-->
-						<input type="hidden" id="cpId" name="cpId"
-							th:value=${cpproduct.id}> <input type="number"
-							name="amount" id="amount" th:value="${cpproduct.amount}"
+						<input type="hidden" id="chequeId" name="chequeId" th:value="${cheque.id}">
+						<input type="hidden" id="cpId" name="cpId" th:value=${cpproduct.id}> 
+						<input type="number" name="amount" id="amount" th:value="${cpproduct.amount}"
 							th:disabled="${cheque.dateCreated != null}? 'true':'false'">
 						&nbsp;<span th:text="${cpproduct.product.unit.name}"></span>
 				</td>
