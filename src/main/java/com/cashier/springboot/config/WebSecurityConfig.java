@@ -16,11 +16,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.cashier.springboot.service.CustomUserDetailsServiceImpl;
+
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
-	private CustomUserDetailsService userDetailsService;
+	private CustomUserDetailsServiceImpl userDetailsService;
 	
     protected void configure(HttpSecurity http) throws Exception {
 		http		 	

@@ -36,7 +36,7 @@ public class ChequeController {
 	
 	@PostMapping(path = "/add")
 	public String addCheque(RedirectAttributes redirectAttributes) {
-		Cheque cheque = chequeService.addCheque();
+		Cheque cheque = chequeService.newCheque();
 		if (cheque == null) {
 			redirectAttributes.addFlashAttribute("errorMsg", "Shifts error. Possibly no open shifts.");
 			return "redirect:/cheques/all";

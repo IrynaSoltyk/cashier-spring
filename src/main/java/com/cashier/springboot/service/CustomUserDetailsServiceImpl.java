@@ -1,4 +1,4 @@
-package com.cashier.springboot.config;
+package com.cashier.springboot.service;
 
 import javax.annotation.PostConstruct;
 
@@ -9,16 +9,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.cashier.springboot.models.User;
 import com.cashier.springboot.repository.UserRepository;
 
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private WebApplicationContext applicationContext;
-
+    @Autowired
     private UserRepository userRepository;
 
     @PostConstruct
@@ -28,10 +27,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String login) {
-        final User user = userRepository.findByLogin(login);
-        if (user == null) {
-            throw new UsernameNotFoundException(login);
-        }
-        return user;
+        return userRepository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException(login));
     }
 }
